@@ -2,24 +2,28 @@
 #
 # PM-QA validation test suite fore the power management on Linux
 #
-# Copyright (c) 2011, Linaro Limited.
-# Copyright (c) 2014, freescale Inc.
 #
 source ../include/functions.sh
 
-###
+#
+# test the cpufreq framework is available for frequency
+#
 
 FILES="scaling_available_frequencies scaling_cur_freq scaling_setspeed"
 
 for_each_cpu check_cpufreq_files $FILES
 
-####
+#
+# test the cpufreq framework is available for governor
+#
 
 FILES="scaling_available_governors scaling_governor"
 
 for_each_cpu check_cpufreq_files $FILES
 
-###
+#
+# test the governor change is effective
+#
 
 check_governor() {
 	
@@ -39,7 +43,11 @@ check_governor() {
 
 for_each_cpu for_each_governor check_governor || exit 1
 
-###
+#
+# test the change of the frequency is 
+#effective in 'userspace mode'
+#
+
 check_frequency() {
 	local cpu=$1;
 	local newfreq=$2
@@ -64,7 +72,10 @@ else
 	for_each_cpu for_each_frequency check_frequency || exit 1
 fi
 	
-#####
+#
+# test 'onedemand' and conservative' trigger 
+#correctly the configuration directory
+#
 
 save_governors
 
@@ -145,7 +156,10 @@ fi
 
 restore_governors
 
-###
+#
+# test the change of the frequencies affects 
+# the performance of a test program
+#
 
 CPUCYCLE=../utils/cpucycle
 
@@ -237,7 +251,9 @@ for_each_cpu check_deviation
 restore_frequencies
 restore_governors
 
-###
+#
+# test the load of the cpu affects the frequency with 'onedemand'
+#
 
 CPUBURN=../utils/cpuburn
 
@@ -297,7 +313,9 @@ for_each_cpu check_ondemand
 
 restore_governors
 
-###
+#
+# test the load of the cpu does not affect the frequency with 'userspace'
+#
 
 CPUBURN=../utils/cpuburn
 
@@ -350,9 +368,9 @@ for_each_cpu check_userspace
 
 restore_governors
 
-###
-
-source ../include/functions.sh
+#
+# test the load of the cpu does not affect the frequency with 'powersave'
+#
 
 CPUBURN=../utils/cpuburn
 
