@@ -1,0 +1,15 @@
+General Info
+============
+- In order to run the tests, invoke as root:
+
+   ./test.sh
+
+- If you want to run a subset of the tests, do:
+        cd to subdir 
+	run the individual shell script
+Other info
+==========
+more information about the tests can be find on 
+https://wiki.linaro.org/WorkingGroups/PowerManagement/Resources/TestSuite/PmQaSpecification#cpuhotplug_02
+--
+

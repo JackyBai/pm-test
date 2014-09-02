@@ -1,0 +1,6 @@
+jiffies are : 10000 usecs
+found 1 cpu(s)
+CPU0 duration: 120 secs, #sleep: 1200, delay: 100000 us
+CPU0 counter value 4229870727
+CPU0 test duration: 120.062263 secs
+CPU0 deviation 0.000519

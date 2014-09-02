@@ -1,0 +1,12 @@
+Error: main: Could not initialize canvas
+cp: cannot stat '/etc/lightdm/lightdm.conf': No such file or directory
+../include/thermal_functions.sh: line 261: /etc/lightdm/lightdm.conf: No such file or directory
+../include/thermal_functions.sh: line 263: restart: command not found
+mv: cannot stat '/etc/lightdm/lightdm.conf.bk': No such file or directory
+Error: main: Could not initialize canvas
+../include/thermal_functions.sh: line 283: kill: (1931) - No such process
+./thermal_test.sh: line 183:  1919 Killed                  $CPU_HEAT_BIN
+./thermal_test.sh: line 183:  1941 Killed                  ./$HEAT_CPU_MODERATE moderate
+./thermal_test.sh: line 226:  1957 Killed                  ./$HEAT_CPU_MODERATE moderate
+../include/thermal_functions.sh: line 188: [: 996000[0]: integer expression expected
+../include/thermal_functions.sh: line 188: [: 996000[0]: integer expression expected
