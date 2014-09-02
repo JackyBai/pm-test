@@ -127,7 +127,7 @@ for_each_cooling_device check_cooling_device_states
 CPU_HEAT_BIN=../utils/heat_cpu
 cpu_pid=0
 
-heater_kill() {
+heater_kill1() {
     if [ $cpu_pid -ne 0 ]; then
 	kill -9 $cpu_pid
     fi
@@ -150,7 +150,7 @@ check_temperature_change() {
 
     sleep 5
     local final_temp=$(cat $dirpath/temp)
-    heater_kill
+    heater_kill1
     check "temperature variation with load" "test $final_temp -gt $init_temp"
 }
 
@@ -163,7 +163,7 @@ for_each_thermal_zone check_temperature_change
 HEAT_CPU_MODERATE=../utils/heat_cpu
 pid=0
 
-heater_kill() {
+heater_kill2() {
     if [ $pid -ne 0 ]; then
 	kill -9 $pid
     fi
@@ -206,7 +206,7 @@ verify_cooling_device_temp_change() {
 					"test $cool_temp -ge 0"
 	count=$((count+1))
     done
-    heater_kill
+    heater_kill2
     echo $prev_mode_val > $tzonepath/mode
     echo $prev_state_val > $dirpath/cur_state
 }
@@ -262,79 +262,6 @@ verify_cpufreq_cooling_device_action() {
 }
 for_each_cooling_device verify_cpufreq_cooling_device_action
 
-#######
-
-if [ "$thermal_try_max" -eq 0 ]; then
-    log_skip "test of trip points being crossed"
-    exit 0
-fi
-
-TEST_LOOP=100
-CPU_HEAT_BIN=../utils/heat_cpu
-cpu_pid=0
-
-heater_kill() {
-    if [ $cpu_pid -ne 0 ]; then
-	kill -9 $cpu_pid
-    fi
-    kill_glmark2
-}
-
-check_trip_point_change() {
-    local dirpath=$THERMAL_PATH/$1
-    local zone_name=$1
-    shift 1
-
-    local count=0
-    local cur_temp=0
-    local trip_temp=0
-    local trip_cross=
-    local trip_id=
-    local trip_type=0
-    local trip_type_path=0
-    $CPU_HEAT_BIN &
-    cpu_pid=$(ps | grep heat_cpu| awk '{print $1}')
-    test -z $cpu_pid && cpu_pid=0
-    check "start cpu heat binary" "test $cpu_pid -ne 0"
-    test $cpu_pid -eq 0 && return
-
-    start_glmark2
-
-    local index=0
-    for trip in $(ls $dirpath | grep "trip_point_['$MAX_ZONE']_temp"); do
-	trip_cross[$index]=0
-	index=$((index + 1))
-    done
-    while (test $count -lt $TEST_LOOP); do
-	index=0
-	sleep 1
-	for trip in $(ls $dirpath | grep "trip_point_['$MAX_ZONE']_temp"); do
-	    cur_temp=$(cat $dirpath/temp)
-	    trip_temp=$(cat $dirpath/$trip)
-	    if [ $cur_temp -gt $trip_temp ]; then
-	        trip_cross[$index]=$((${trip_cross[$index]} + 1))
- 	    fi
-	    index=$((index + 1))
-
-	done
-	count=$((count + 1))
-    done
-    index=0
-    for trip in $(ls $dirpath | grep "trip_point_['$MAX_ZONE']_temp"); do
-	get_trip_id $trip
-	trip_id=$?
-	trip_type=$(cat $dirpath/trip_point_$((trip_id))_type)
-	trip_temp=$(cat $dirpath/$trip)
-
-	if [ $trip_type != "critical" ]; then
-	    count=${trip_cross[$index]}
-	    check "$trip:$trip_temp crossed" "test $count -gt 0"
-	fi
-	index=$((index + 1))
-    done
-
-    heater_kill
-}
 
 trap "heater_kill; sigtrap" SIGHUP SIGINT SIGTERM
 
